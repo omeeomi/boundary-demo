@@ -36,5 +36,5 @@ variable "db_password" {
 
 variable "aws_key_name" {
   type        = string
-  description = "The name of the key pair in your AWS account that you would like to add to the EC2 instances that are created"
+  description = "The name of the key pair in your AWS account that you would like to add to the EC2 instances that are created. Note- Make sure the key is also in the correct region."
 }
