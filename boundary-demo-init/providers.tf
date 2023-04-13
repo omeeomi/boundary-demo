@@ -7,14 +7,14 @@ terraform {
     }
   }
   cloud {
-    organization = "var.tfc_org"
+    organization = var.tfc_org
     workspaces {
-      name = "var.workspace_name"
+      name = var.workspace_name
     }
   }
 }
 
 provider "hcp" {
-  client_id     = "var.hcp_client_id"
-  client_secret = "var.hcp_client_secret"
+  client_id     = var.hcp_client_id
+  client_secret = var.hcp_client_secret
 }
