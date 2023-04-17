@@ -153,7 +153,7 @@ module "eks" {
   }
 }
 
-# SSH Target
+# SSH Target - A
 resource "aws_instance" "ssh-cert-target" {
   depends_on = [
     vault_ssh_secret_backend_ca.ssh_ca, aws_vpc_peering_connection_options.dns
@@ -177,6 +177,30 @@ resource "aws_instance" "ssh-cert-target" {
   }
 }
 
+# SSH Target - B
+resource "aws_instance" "ssh-cert-target-b" {
+  depends_on = [
+    vault_ssh_secret_backend_ca.ssh_ca, aws_vpc_peering_connection_options.dns
+  ]
+  lifecycle {
+    ignore_changes = [user_data_base64]
+  }
+  ami           = data.aws_ami.aws_linux_hvm2.id
+  instance_type = "t3.micro"
+
+  key_name                    = data.aws_key_pair.aws_key_name.key_name
+  monitoring                  = true
+  subnet_id                   = module.boundary-eks-vpc.private_subnets[1]
+  vpc_security_group_ids      = [module.ssh-cert-sec-group.security_group_id]
+  user_data_base64            = data.cloudinit_config.ssh_cert_target.rendered
+  user_data_replace_on_change = true
+
+  tags = {
+    Team = "PIE"
+    Name = "ssh-cert-target-b"
+  }
+}
+    
 #Create SSH target security group
 module "ssh-cert-sec-group" {
   source  = "terraform-aws-modules/security-group/aws"
