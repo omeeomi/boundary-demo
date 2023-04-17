@@ -84,11 +84,11 @@ resource "vault_policy" "ssh-cert-role" {
   policy    = data.vault_policy_document.ssh-cert-role.hcl
 }
 
-resource "vault_policy" "db-policy" {
-  namespace = vault_namespace.dev.path_fq
-  name      = "db-policy"
-  policy    = data.vault_policy_document.db-secrets.hcl
-}
+#resource "vault_policy" "-policy" {
+#  namespace = vault_namespace.dev.path_fq
+#  name      = "db-policy"
+#  policy    = data.vault_policy_document.db-secrets.hcl
+#}
 
 # Create Tokens for Boundary to use for Credential Store
 resource "vault_token_auth_backend_role" "boundary-token-role-dev" {
