@@ -52,12 +52,12 @@ data "vault_policy_document" "ssh-cert-role" {
 }
 
 # Create Policy to read Dynamic DB secrets
-data "vault_policy_document" "db-secrets" {
-  rule {
-    path         = "${vault_database_secrets_mount.postgres.path}/creds/db1"
-    capabilities = ["read"]
-  }
-}
+#data "vault_policy_document" "db-secrets" {
+#  rule {
+#    path         = "${vault_database_secrets_mount.postgres.path}/creds/db1"
+#    capabilities = ["read"]
+#  }
+#}
 
 #Create vault policies from policy documents
 resource "vault_policy" "boundary-token-policy-dev" {
