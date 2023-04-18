@@ -173,29 +173,29 @@ resource "vault_ssh_secret_backend_role" "cert-role" {
 
 #### Database Secrets Engine
 # Create DB secrets mount
-#resource "vault_database_secrets_mount" "postgres" {
-#  namespace = vault_namespace.dev.path_fq
-#  path      = "database"
+resource "vault_database_secrets_mount" "postgres" {
+  namespace = vault_namespace.dev.path_fq
+  path      = "database"
 
-#  postgresql {
-#    name              = "postgres"
-#    username          = var.db_user
-#    password          = var.db_password
-#    connection_url    = "postgresql://{{username}}:{{password}}@${aws_db_instance.postgres.endpoint}/postgres"
-#    verify_connection = true
-#    allowed_roles     = ["db1"]
-#  }
-#}
+  postgresql {
+    name              = "postgres"
+    username          = var.db_user
+    password          = var.db_password
+    connection_url    = "postgresql://{{username}}:{{password}}@${aws_db_instance.postgres.endpoint}/postgres"
+    verify_connection = true
+    allowed_roles     = ["db1"]
+  }
+}
 
 # Create role for getting dynamic DB secrets
 
-#resource "vault_database_secret_backend_role" "db1" {
-#  namespace = vault_namespace.dev.path_fq
-#  name      = "db1"
-#  backend   = vault_database_secrets_mount.postgres.path
-#  db_name   = vault_database_secrets_mount.postgres.postgresql[0].name
-#  creation_statements = [
-#    "CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}';",
-#    "GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";",
-#  ]
-#}
+resource "vault_database_secret_backend_role" "db1" {
+  namespace = vault_namespace.dev.path_fq
+  name      = "db1"
+  backend   = vault_database_secrets_mount.postgres.path
+  db_name   = vault_database_secrets_mount.postgres.postgresql[0].name
+  creation_statements = [
+    "CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}';",
+    "GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";",
+  ]
+}
