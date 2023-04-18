@@ -212,46 +212,46 @@ module "ssh-cert-sec-group" {
 }
 
 #RDS Database Target
-#resource "aws_db_subnet_group" "postgres" {
-#  name       = "boundary-demo-group"
-#  subnet_ids = module.boundary-eks-vpc.private_subnets
-#}
-#
-#resource "aws_db_instance" "postgres" {
-#  allocated_storage      = 10
-#  db_name                = "postgres"
-#  engine                 = "postgres"
-#  engine_version         = "12.7"
-#  instance_class         = "db.t3.micro"
-#  username               = var.db_user
-#  password               = var.db_password
-#  db_subnet_group_name   = aws_db_subnet_group.postgres.name
-#  skip_final_snapshot    = true
-#  vpc_security_group_ids = [module.rds-sec-group.security_group_id]
-#}
+resource "aws_db_subnet_group" "postgres" {
+  name       = "boundary-demo-group"
+  subnet_ids = module.boundary-eks-vpc.private_subnets
+}
+
+resource "aws_db_instance" "postgres" {
+  allocated_storage      = 10
+  db_name                = "postgres"
+  engine                 = "postgres"
+  engine_version         = "12.7"
+  instance_class         = "db.t3.micro"
+  username               = var.db_user
+  password               = var.db_password
+  db_subnet_group_name   = aws_db_subnet_group.postgres.name
+  skip_final_snapshot    = true
+  vpc_security_group_ids = [module.rds-sec-group.security_group_id]
+}
 
 #RDS Security Group
-#module "rds-sec-group" {
-#  source  = "terraform-aws-modules/security-group/aws"
-#  version = "4.17.1"
-#
-#  name        = "rds-sec-group"
-#  description = "Allow Access from Boundary Worker to Database endpoint"
-#  vpc_id      = module.boundary-eks-vpc.vpc_id
-#
-#  ingress_with_source_security_group_id = [
-#    {
-#      rule                     = "postgresql-tcp"
-#      source_security_group_id = module.worker-sec-group.security_group_id
-#    },
-#  ]
-#  ingress_with_cidr_blocks = [
-#    {
-#      rule        = "postgresql-tcp"
-#      cidr_blocks = data.tfe_outputs.boundary_demo_init.values.hvn_cidr
-#    }
-#  ]
-#}
+module "rds-sec-group" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "4.17.1"
+
+  name        = "rds-sec-group"
+  description = "Allow Access from Boundary Worker to Database endpoint"
+  vpc_id      = module.boundary-eks-vpc.vpc_id
+
+  ingress_with_source_security_group_id = [
+    {
+      rule                     = "postgresql-tcp"
+      source_security_group_id = module.worker-sec-group.security_group_id
+    },
+  ]
+  ingress_with_cidr_blocks = [
+    {
+      rule        = "postgresql-tcp"
+      cidr_blocks = data.tfe_outputs.boundary_demo_init.values.hvn_cidr
+    }
+  ]
+}
 
 # Windows Target
 resource "aws_instance" "rdp-target" {
