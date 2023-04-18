@@ -23,22 +23,36 @@ resource "okta_app_oauth" "okta_app" {
   }
 }
 
-# Assign the pie, dev and IT users groups to the Okta App
-# Need to replace the group_id with your own group_ids from Okta.  Will look at getting this from a data source in the future
+# Create then assign the pie, dev and IT users groups to the Okta App
+resource "okta_group" "pie_users" {
+  name        = "pie_users"
+  description = "Platform Infrastructure Engineering Group"
+}
+
 resource "okta_app_group_assignment" "pie_users" {
   app_id   = okta_app_oauth.okta_app.id
-  group_id = "00g93iwwo9cWmokB35d7"
+  group_id = okta_group.pie_users.id
+}
+resource "okta_group" "dev_users" {
+  name        = "dev_users"
+  description = "Developer User Group"
 }
 
 resource "okta_app_group_assignment" "dev_users" {
   app_id   = okta_app_oauth.okta_app.id
-  group_id = "00g93j11vojfzsdiA5d7"
+  group_id = okta_group.dev_users.id
+}
+
+resource "okta_group" "it_users" {
+  name        = "it_users"
+  description = "IT User Group"
 }
 
 resource "okta_app_group_assignment" "it_users" {
   app_id   = okta_app_oauth.okta_app.id
-  group_id = "00g93izgquKzavX1s5d7"
+  group_id = okta_group.it_users.id
 }
+
 
 # Create the OIDC auth method in boundary linked to the Okta Oauth App
 resource "boundary_auth_method_oidc" "oidc_auth_method" {
