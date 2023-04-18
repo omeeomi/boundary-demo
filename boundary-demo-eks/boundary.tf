@@ -205,20 +205,20 @@ resource "boundary_scope" "dev_w2_project" {
 }
 
 # Create Postgres RDS Target
-#resource "boundary_target" "dev-db-target" {
-#  type                     = "tcp"
-#  name                     = "dev-db-target"
-#  description              = "Dev main database"
-#  scope_id                 = boundary_scope.dev_w2_project.id
-#  session_connection_limit = -1
-#  default_port             = 5432
-#  address                  = split(":", aws_db_instance.postgres.endpoint)[0]
-#  egress_worker_filter     = "\"us-west-2\" in \"/tags/region\""
+resource "boundary_target" "dev-db-target" {
+  type                     = "tcp"
+  name                     = "dev-db-target"
+  description              = "Dev main database"
+  scope_id                 = boundary_scope.dev_w2_project.id
+  session_connection_limit = -1
+  default_port             = 5432
+  address                  = split(":", aws_db_instance.postgres.endpoint)[0]
+  egress_worker_filter     = "\"us-west-2\" in \"/tags/region\""
 
-#  brokered_credential_source_ids = [
-#    boundary_credential_library_vault.database.id
-#  ]
-#}
+  brokered_credential_source_ids = [
+    boundary_credential_library_vault.database.id
+  ]
+}
 
 # Create Dev Vault Credential store
 resource "boundary_credential_store_vault" "dev_vault" {
@@ -231,14 +231,14 @@ resource "boundary_credential_store_vault" "dev_vault" {
 }
 
 # Create Database Credential Library
-#resource "boundary_credential_library_vault" "database" {
-#  name                = "database"
-#  description         = "Postgres DB Credential Library"
-#  credential_store_id = boundary_credential_store_vault.dev_vault.id
-#  path                = "database/creds/db1" # change to Vault backend path
-#  http_method         = "GET"
-#  credential_type     = "username_password"
-#}
+resource "boundary_credential_library_vault" "database" {
+  name                = "database"
+  description         = "Postgres DB Credential Library"
+  credential_store_id = boundary_credential_store_vault.dev_vault.id
+  path                = "database/creds/db1" # change to Vault backend path
+  http_method         = "GET"
+  credential_type     = "username_password"
+}
 
 #### Create IT Organization Resources ####
 
