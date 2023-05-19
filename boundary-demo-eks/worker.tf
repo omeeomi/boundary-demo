@@ -6,41 +6,41 @@ resource "random_uuid" "worker_uuid" {}
 #  worker_generated_auth_token = ""
 #}
 
-locals {
-  boundary_worker_config = <<-WORKER_CONFIG
-    hcp_boundary_cluster_id = "${split(".", split("//", data.tfe_outputs.boundary_demo_init.values.boundary_url)[1])[0]}"
-    listener "tcp" {
-      purpose = "proxy"
-      address = "0.0.0.0"
-    }
-    worker {
-      auth_storage_path = "/etc/boundary-worker-data"
-      controller_generated_activation_token = "${boundary_worker.hcp_pki_worker.controller_generated_activation_token}"
-      tags {
-        type = "public_instance"
-        cloud = "aws"
-        region = "${var.region}"
-      }
-    }
-    WORKER_CONFIG
-
-  cloudinit_config_boundary_worker = {
-    write_files = [
-      {
-        content     = local.boundary_worker_config
-        owner       = "root:root"
-        path        = "/run/boundary/config.hcl"
-        permissions = "0644"
-      },
-    ]
-    runcmd = [
-      ["yum", "update", "-y"],
-      ["yum", "install", "-y", "docker"],
-      ["systemctl", "start", "docker"],
-      ["docker", "run", "-p", "9202:9202", "-v", "/run/boundary:/boundary/", "hashicorp/boundary-worker-hcp", "boundary-worker", "server", "-config", "/boundary/config.hcl"]
-    ]
-  }
-}
+#locals {
+#  boundary_worker_config = <<-WORKER_CONFIG
+#    hcp_boundary_cluster_id = "${split(".", split("//", data.tfe_outputs.boundary_demo_init.values.boundary_url)[1])[0]}"
+#    listener "tcp" {
+#      purpose = "proxy"
+#      address = "0.0.0.0"
+#    }
+#    worker {
+#      auth_storage_path = "/etc/boundary-worker-data"
+#      controller_generated_activation_token = "${boundary_worker.hcp_pki_worker.controller_generated_activation_token}"
+#      tags {
+#        type = "public_instance"
+#        cloud = "aws"
+#        region = "${var.region}"
+#      }
+#    }
+#    WORKER_CONFIG
+#
+#  cloudinit_config_boundary_worker = {
+#    write_files = [
+#      {
+#        content     = local.boundary_worker_config
+#        owner       = "root:root"
+#        path        = "/run/boundary/config.hcl"
+#        permissions = "0644"
+#      },
+#    ]
+#    runcmd = [
+#      ["yum", "update", "-y"],
+#      ["yum", "install", "-y", "docker"],
+#      ["systemctl", "start", "docker"],
+#      ["docker", "run", "-p", "9202:9202", "-v", "/run/boundary:/boundary/", "hashicorp/boundary-worker-hcp", "boundary-worker", "server", "-config", "/boundary/config.hcl"]
+#    ]
+#  }
+#}
 
 data "cloudinit_config" "boundary_worker" {
   gzip          = false
