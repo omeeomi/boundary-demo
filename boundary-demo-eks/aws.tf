@@ -163,7 +163,7 @@ resource "aws_instance" "ssh-cert-target" {
   }
   ami           = data.aws_ami.aws_linux_hvm2.id
   instance_type = "t3.micro"
-  count        = 3
+  count        = 2
   key_name                    = data.aws_key_pair.aws_key_name.key_name
   monitoring                  = true
   subnet_id                   = module.boundary-eks-vpc.private_subnets[1]
