@@ -1,10 +1,10 @@
 resource "random_uuid" "worker_uuid" {}
 
-resource "boundary_worker" "hcp_pki_worker" {
-  scope_id                    = "global"
-  name                        = "boundary-worker-${random_uuid.worker_uuid.result}"
-  worker_generated_auth_token = ""
-}
+#resource "boundary_worker" "hcp_pki_worker" {
+#  scope_id                    = "global"
+#  name                        = "boundary-worker-${random_uuid.worker_uuid.result}"
+#  worker_generated_auth_token = ""
+#}
 
 locals {
   boundary_worker_config = <<-WORKER_CONFIG
@@ -51,25 +51,25 @@ data "cloudinit_config" "boundary_worker" {
   }
 }
 
-resource "aws_instance" "worker" {
-  lifecycle {
-    ignore_changes = [user_data_base64]
-  }
-
-  ami           = data.aws_ami.aws_linux_hvm2.id
-  instance_type = "t3.micro"
-
-  key_name                    = data.aws_key_pair.aws_key_name.key_name
-  monitoring                  = true
-  subnet_id                   = module.boundary-eks-vpc.private_subnets[0]
-  vpc_security_group_ids      = [module.worker-sec-group.security_group_id]
-  user_data_base64            = data.cloudinit_config.boundary_worker.rendered
-  user_data_replace_on_change = false
-
-  tags = {
-    Name = "boundary-worker-${random_uuid.worker_uuid.result}"
-  }
-}
+#resource "aws_instance" "worker" {
+#  lifecycle {
+#    ignore_changes = [user_data_base64]
+#  }
+#
+#  ami           = data.aws_ami.aws_linux_hvm2.id
+#  instance_type = "t3.micro"
+#
+#  key_name                    = data.aws_key_pair.aws_key_name.key_name
+#  monitoring                  = true
+#  subnet_id                   = module.boundary-eks-vpc.private_subnets[0]
+#  vpc_security_group_ids      = [module.worker-sec-group.security_group_id]
+#  user_data_base64            = data.cloudinit_config.boundary_worker.rendered
+#  user_data_replace_on_change = false
+#
+#  tags = {
+#    Name = "boundary-worker-${random_uuid.worker_uuid.result}"
+#  }
+#}
 
 #Create worker EC2 security group
 module "worker-sec-group" {
