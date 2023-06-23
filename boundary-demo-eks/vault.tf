@@ -94,7 +94,7 @@ resource "vault_policy" "db-policy" {
 resource "vault_token_auth_backend_role" "boundary-token-role-dev" {
   namespace        = vault_namespace.dev.path_fq
   role_name        = "boundary-controller-role-dev"
-  allowed_policies = [vault_policy.boundary-token-policy-dev.name, vault_policy.db-policy.name]
+  allowed_policies = [vault_policy.boundary-token-policy-dev.name] # Removed- vault_policy.db-policy.name
   orphan           = true
 }
 
@@ -119,7 +119,7 @@ resource "vault_token" "boundary-token-pie" {
 resource "vault_token" "boundary-token-dev" {
   namespace = vault_namespace.dev.path_fq
   role_name = vault_token_auth_backend_role.boundary-token-role-dev.role_name
-  policies  = [vault_policy.boundary-token-policy-dev.name, vault_policy.db-policy.name]
+  policies  = [vault_policy.boundary-token-policy-dev.name] #Removed- , vault_policy.db-policy.name
   no_parent = true
   renewable = true
   ttl       = "24h"
